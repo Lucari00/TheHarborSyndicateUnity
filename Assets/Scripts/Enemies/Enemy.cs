@@ -5,21 +5,39 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public bool isHit = false;
-    // Start is called before the first frame update
-    void Update()
-    {
-        
+    // States :
+    // 0 : idle; 1 : rifle idle; 2 : hit; 3 : walk
+    [HideInInspector] public Animator anim;
+    private Shoot shootScript;
+    [SerializeField] private GameObject rifle;
+
+    private void Start() {
+        anim = GetComponent<Animator>();
+        shootScript = GetComponent<Shoot>();
     }
 
-    void supprEnemy() {
+    void SupprEnemy() {
         gameObject.SetActive(false);
     }
 
     public void Hit() {
         if (!isHit) {
-            // faire anim de kill
-            Invoke("supprEnemy", 15f);
+            anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+            anim.SetInteger("state", 2);
+            Invoke("SupprEnemy", 15f);
         }
         isHit = true;
+    }
+
+    public void Shoot() {
+        if (!isHit) {
+            shootScript.Fire();
+        }
+    }
+
+    public void AimAt(Transform target) {
+        if (!isHit) {
+            rifle.transform.LookAt(target);
+        }
     }
 }

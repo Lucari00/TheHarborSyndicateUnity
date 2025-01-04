@@ -2,11 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-public class DetectionShoot : MonoBehaviour
+public class DetectionShoot : AbstractTutoClass
 {
     public GameObject textKey;
     public GameObject playerObject;
-    public GameObject propGunObject;
     public GameObject characterObject;
     public GameObject crosshairObject;
     public KeyCode keyGet = KeyCode.E;
@@ -18,7 +17,7 @@ public class DetectionShoot : MonoBehaviour
         shootScript = playerObject.GetComponent<Shoot>();
     }
 
-    private void Update() {
+    private void FixedUpdate() {
         GetInput();
     }
 
@@ -30,16 +29,18 @@ public class DetectionShoot : MonoBehaviour
 
     private void TakeGun() {
         shootScript.hasGun = true;
-        propGunObject.SetActive(false);
+        propsObjects[0].SetActive(false);
         textKey.SetActive(false);
         characterObject.SetActive(true);
         crosshairObject.SetActive(true);
         gameObject.SetActive(false);
+        isFinish = true;
     }
 
     void OnTriggerEnter(Collider other) {
         // Vérifie si le joueur est entré dans la zone de détection de la porte
         if (other.CompareTag("Player")) {
+            textKey.GetComponent<TextMeshProUGUI>().text = "Press E to get the gun";
             textKey.SetActive(true);
             isInRange = true;
         }

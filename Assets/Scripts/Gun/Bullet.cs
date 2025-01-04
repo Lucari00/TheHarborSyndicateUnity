@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public float speed = 10f;
+    public float speed = 20f;
     public GameObject fxSmoke;
     public GameObject bloodObject;
     public GameObject trailEffect;
     public bool isMoving = true;
+    public bool isPlayerBullet = false;
 
     private GameObject trailEffectObject;
 
@@ -18,7 +19,7 @@ public class Bullet : MonoBehaviour
     }
 
     private void SupprBullet() {
-        gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 
     private void CreateTrail() {
@@ -30,34 +31,35 @@ public class Bullet : MonoBehaviour
     void Update()
     {
         if (transform.position.x > 300 || transform.position.x < -300 || transform.position.z > 300 || transform.position.z < -300) {
-            gameObject.SetActive(false);
+            SupprBullet();
         }
         if (isMoving) {
             transform.Translate(Vector3.up * speed * Time.deltaTime);
-            if (trailEffectObject != null) {
-                trailEffectObject.transform.position = transform.position;
-            }
         }
     }
 
     private void OnTriggerEnter(Collider other) {
-        Debug.Log(other);
         if (other.CompareTag("Player")) {
+            if (!isPlayerBullet) {
+                Instantiate(bloodObject, transform.position, transform.rotation);
+                // hits the capsule collider, not the player
+                Player playerScript = other.transform.parent.GetComponent<Player>();
+                if (playerScript != null) {
+                    playerScript.TakeDamage(10);
+                }
+            }
             return;
-        }
-
-        if (other.CompareTag("Enemy")) {
-            Instantiate(bloodObject, transform);
+        } else if (other.CompareTag("Enemy")) {
+            Instantiate(bloodObject, transform.position, transform.rotation);
             GameObject guardObject = other.transform.parent.parent.gameObject;
             Enemy enemyScript = guardObject.GetComponent<Enemy>();
             if (enemyScript != null) {
                 enemyScript.Hit();
             }
         } else {
-            Instantiate(fxSmoke, transform);
+            Instantiate(fxSmoke, transform.position, transform.rotation);
         }
         isMoving = false;
-        
-        //gameObject.SetActive(false);
+        SupprBullet();
     }
 }

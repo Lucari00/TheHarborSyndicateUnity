@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class moveGun : MonoBehaviour
+public class MoveGun : MonoBehaviour
 {
     public Transform orientation;
 

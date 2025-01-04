@@ -3161,7 +3161,6 @@ GameObject:
   - component: {fileID: 8682341886407437976}
   - component: {fileID: 3948404396509555287}
   - component: {fileID: 2098183198881818645}
-  - component: {fileID: 6470852504107714349}
   m_Layer: 0
   m_Name: Guard
   m_TagString: Untagged
@@ -3207,7 +3206,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 657f1cd96e01e4c4f882862eb1cd1eaf, type: 2}
-  m_CullingMode: 0
+  m_CullingMode: 2
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -3260,18 +3259,6 @@ MonoBehaviour:
   - m_Rig: {fileID: 348722737383861480}
     m_Active: 1
   m_Effectors: []
---- !u!114 &6470852504107714349
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6889611265653967191}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3c5e8162e344fd429b5b921e3ebf943, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &6944562662027855538
 GameObject:
   m_ObjectHideFlags: 0

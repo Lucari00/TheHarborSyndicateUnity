@@ -1,4 +1,3 @@
-repository "UnityGameProject@Lucari00@cloud"
+rep "UnityGameProject@Lucari00@cloud"
   path "/"
-    br "/main"
-    co "/main"
+    smartbranch "/main"

@@ -2,30 +2,30 @@ using UnityEngine;
 
 public class Shoot : MonoBehaviour {
 
-    public GameObject bulletObject;
-    public GameObject gun;
-    public GameObject fxSmoke;
-    public KeyCode shootKey = KeyCode.Mouse0;
-    public AudioSource audioSource;
-    public Transform characterOrientation;
-    public float shootCooldown;
-    private bool readyToShoot;
+    [SerializeField] private GameObject bulletObject;
+    [SerializeField] private GameObject canon;
+    [SerializeField] private GameObject fxSmoke;
+    [SerializeField] private KeyCode shootKey = KeyCode.Mouse0;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private Transform characterOrientation;
+    [SerializeField] private float shootCooldown;
+    [SerializeField] private bool readyToShoot;
     public bool hasGun;
-    public bool isPlayer;
+    [SerializeField] private bool isPlayer;
+    public bool isPaused;
 
     public Transform orientation;
 
     private void Start() {
+        isPaused = false;
         readyToShoot = true;
-        if (isPlayer) {
-            hasGun = true; // à changer quand on pourra recup l'arme
-        } else {
+        if (!isPlayer) {
             hasGun = true;
         }
     }
 
     private void getInput() {
-        if (Input.GetKey(shootKey) && readyToShoot && hasGun) {
+        if (Input.GetKey(shootKey) && readyToShoot && hasGun && !isPaused) {
             readyToShoot = false;
             Fire();
             Invoke("ResetShoot", shootCooldown);
@@ -36,10 +36,15 @@ public class Shoot : MonoBehaviour {
         readyToShoot = true;
     }
 
-    private void Fire() {
-        Quaternion rotation = Quaternion.Euler(-8f, characterOrientation.localRotation.eulerAngles.y - 0.2f, characterOrientation.localRotation.eulerAngles.z + 90);
-        Instantiate(bulletObject, gun.transform.position, rotation);
-        Instantiate(fxSmoke, gun.transform.position + new Vector3(0f, 0.05f, 0f), rotation);
+    public void Fire() {
+        Quaternion rotation = Quaternion.Euler(-8f, characterOrientation.localRotation.eulerAngles.y -0.2f, characterOrientation.localRotation.eulerAngles.z + 90);
+        if(!isPlayer) {
+            rotation = Quaternion.Euler(-8f, characterOrientation.localRotation.eulerAngles.y + 90f, characterOrientation.localRotation.eulerAngles.z + 90);
+        }
+        
+        GameObject bulletObj = Instantiate(bulletObject, canon.transform.position, rotation);
+        bulletObj.GetComponent<Bullet>().isPlayerBullet = isPlayer;
+        Instantiate(fxSmoke, canon.transform.position + new Vector3(0f, 0.05f, 0f), rotation);
         PlaySound();
     }
 
@@ -52,7 +57,7 @@ public class Shoot : MonoBehaviour {
 
     void PlaySound() {
         if (audioSource != null) {
-            audioSource.Play(); // Commencez à jouer le son
+            audioSource.Play();
         }
     }
 }

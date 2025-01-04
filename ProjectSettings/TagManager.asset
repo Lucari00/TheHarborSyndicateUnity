@@ -7,6 +7,9 @@ TagManager:
   - Enemy
   - Wall
   - OwnGun
+  - Camera
+  - Vehicle
+  - StolenCar
   layers:
   - Default
   - TransparentFX
@@ -16,10 +19,10 @@ TagManager:
   - UI
   - TPV
   - FPV
-  - 
-  - 
+  - ThroughWall
+  - PostProcessing
   - GroundMask
-  - 
+  - PlayerLayer
   - 
   - 
   - 

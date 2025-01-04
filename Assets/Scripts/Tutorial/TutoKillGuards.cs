@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TutoKillGuards : MonoBehaviour
+public class TutoKillGuards : AbstractTutoClass
 {
     public GameObject enemyManager;
     public List<GameObject> lights;
@@ -16,7 +16,13 @@ public class TutoKillGuards : MonoBehaviour
         enemies = enemyManagerScript.SpawnGuards(3, new Vector3(-37.5f, 0f, -81f), new Vector3(0, 0, 2.0f), Quaternion.Euler(0, 90f, 0));
     }
 
+    //public override void ObjectVisibleThroughWall() {
+    //}
+    //public override void ObjectHiddenThroughWall() {
+    //}
+
     void Update() {
+        if (isFinished) return;
         foreach (GameObject enemy in enemies) {
             Enemy enemyScript = enemy.GetComponent<Enemy>();
             if (!enemyScript.isHit) {
@@ -26,7 +32,7 @@ public class TutoKillGuards : MonoBehaviour
         isFinished = true;
         if (isFinished) {
             LightOff();
-            isFinished = false;
+            
         }
     }
 
@@ -37,6 +43,7 @@ public class TutoKillGuards : MonoBehaviour
 
     void LightGunOff() {
         lights[0].SetActive(false);
+        isFinish = true;
         gameObject.SetActive(false);
     }
 }

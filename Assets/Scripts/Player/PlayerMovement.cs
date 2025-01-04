@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -26,18 +27,81 @@ public class PlayerMovement : MonoBehaviour
 
     public Transform orientation;
 
+    public Camera mainCamera;
+
+    private CameraTransition cameraTransition;
+
     private float horizontalInput;
     private float verticalInput;
 
     private Vector3 moveDirection;
 
     private Rigidbody rb;
+
+    private Shoot shootScript;
+    private GameObject player;
+
+    private GameObject crosshair;
+    [SerializeField] private TextMeshProUGUI keyText;
+
+    [SerializeField] private GameObject transitionScreen;
+
+    private bool hasGun;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         readyToJump = true;
+        cameraTransition = transitionScreen.GetComponent<CameraTransition>();
+        shootScript = GetComponent<Shoot>();
+        crosshair = GameObject.Find("Crosshair");
+    }
+
+    public void GetIntoVehicle(VehicleController vehicleC) {
+        if (crosshair == null) {
+            crosshair = GameObject.Find("Crosshair");
+        }
+        cameraTransition.ChangeCamera(mainCamera, vehicleC.vehicleCamera);
+        transform.gameObject.SetActive(false);
+        hasGun = shootScript.hasGun;
+        shootScript.hasGun = false;
+        bool active = transform.gameObject.activeSelf;
+        if(!active) {
+            transform.gameObject.SetActive(true);
+        }
+        StartCoroutine(ManagePlayerInVehicleCoroutine(vehicleC, active));
+        if (crosshair != null) {
+            crosshair.SetActive(false);
+        }
+        keyText.text = "Press E to exit or R to reset the position of the vehicle.";
+        keyText.gameObject.SetActive(true);
+    }
+
+    public void GetOutOfVehicle(VehicleController vehicleC, GameObject exitPosition) {
+        cameraTransition.ChangeCamera(vehicleC.vehicleCamera, mainCamera);
+        transform.position = exitPosition.transform.position;
+        transform.gameObject.SetActive(true);
+        shootScript.hasGun = hasGun;
+        StartCoroutine(ManagePlayerInVehicleCoroutine(vehicleC));
+        if (crosshair != null) {
+            crosshair.SetActive(true);
+        }
+        keyText.gameObject.SetActive(false);
+    }
+
+    private IEnumerator ManagePlayerInVehicleCoroutine(VehicleController vehicleC, bool active=true) {
+        yield return new WaitForSeconds(1f);
+
+        if(vehicleC.player == null) {
+            vehicleC.player = gameObject;
+        }
+        else {
+            vehicleC.player = null;
+        }
+        if(!active) {
+            transform.gameObject.SetActive(false);
+        }
     }
 
     public float GetPlayerSpeed() {
@@ -53,7 +117,7 @@ public class PlayerMovement : MonoBehaviour
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
 
-        if (Input.GetKey(jumpKey) && isGrounded && readyToJump) {
+        if (Input.GetKeyDown(jumpKey) && isGrounded && readyToJump) {
             readyToJump = false;
             maxSpeed = moveSpeed;
             Jump();
@@ -76,10 +140,16 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void FixedUpdate() {
+        if (!transform.parent.gameObject.activeSelf) {
+            return;
+        }
         MovePlayer();
     }
 
     private void Update() {
+        if(!transform.parent.gameObject.activeSelf) {
+            return;
+        }
         //Ground check
         isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight / 2 + 0.5f, groundMask);
 
